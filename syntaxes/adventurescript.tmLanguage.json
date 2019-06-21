@@ -1,0 +1,252 @@
+{
+	"name": "Adventure Script",
+	"patterns": [
+		{"include": "#line-keyword"},
+		{"include": "#common"},
+		{"include": "#anti-line-call"},
+		{"include": "#line-call"}
+	],
+	"repository": {
+		"common": {
+			"patterns": [
+				{"include": "#comments"},
+				{"include": "#keywords"},
+				{"include": "#strings"},
+				{"include": "#constants"},
+				{"include": "#blocks"}
+			]
+		},
+		"varname": {
+			"match": "\\.(?:(parent)|[_A-Za-z][\\w]*)|(parent|self|root)|`?[_A-Za-z][\\w]*",
+			"captures": {
+				"1": {"name": "constant.variable.adventurescript"},
+				"2": {"name": "constant.variable.adventurescript"}
+			}
+		},
+		"varname-call": {
+			"match": "(?:(\\.parent|\\.self|\\.root)|\\.[_A-Za-z][\\w]*)\\b",
+			"captures": {
+				"0": {"name": "variable.other.adventurescript"},
+				"1": {"name": "constant.variable.adventurescript"}
+			}
+		},
+		"anti-line-call": {
+			"begin": "(?:(parent|self|root)|([`.]?[_A-Za-z][\\w]*))((?:[.][_A-Za-z][\\w]*)*)(?=\\s*=)",
+			"beginCaptures": {
+				"1": {"name": "constant.variable.adventurescript"},
+				"3": {
+					"patterns": [
+						{
+							"match": "(?:(\\.parent|\\.self|\\.root)\\b",
+							"captures": {
+								"1": {"name": "constant.variable.adventurescript"}
+							}
+						}
+					]
+				}
+			},
+			"end": "$",
+			"patterns": [
+				{"include": "#common"},
+				{"include": "#varname"}
+			]
+		},
+		"line-call": {
+			"begin": "(?:(parent|self|root)|([`.]?[_A-Za-z][\\w]*))((?:[.][_A-Za-z][\\w]*)*)",
+			"beginCaptures": {
+				"1": {"name": "constant.variable.adventurescript"},
+				"2": {"name": "variable.other.adventurescript"},
+				"3": {"patterns": [{"include": "#varname-call"}]}
+			},
+			"end": "$",
+			"patterns": [
+				{"include": "#common"},
+				{"include": "#varname"}
+			]
+		},
+		"line-keyword": {
+			"begin": "\\b(?<!\\.)(if|in|for|elseif|while|local|set|unset|throw|extern|import|return)(?!\\.)\\b",
+			"beginCaptures": {"0": {"name": "keyword.control.adventurescript"}},
+			"end": "$",
+			"patterns": [
+				{"include": "#common"},
+				{"include": "#varname"}
+			]
+		},
+		"blocks": {	
+			"patterns": [
+				{
+					"begin": "\\(",
+					"end": "\\)",
+					"patterns": [
+						{"include": "#common"},
+						{"include": "#varname"}
+					]
+				},
+				{
+					"begin": "\\[",
+					"end": "\\]",
+					"patterns": [
+						{"include": "#common"},
+						{"include": "#varname"}
+					]
+				},
+				{
+					"begin": "\\{(?:\\s*(?:(parent|self|root)|([`.]?[_A-Za-z][\\w]*))((?:[.][_A-Za-z][\\w]*)*))?",
+					"beginCaptures": {
+						"1": {"name": "constant.variable.adventurescript"},
+						"2": {"name": "variable.other.adventurescript"},
+						"3": {"patterns": [{"include": "#varname-call"}]}
+					},
+					"end": "\\}",
+					"patterns": [
+						{"include": "#common"},
+						{"include": "#varname"}
+					]
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.operator.adventurescript",
+					"match": "\\b(?<!\\.`)(and|or|not)(?!\\.)\\b|[?|&!><=+%~\\/*^:@-]+"
+				},
+				{
+					"match": "\\b(?<!\\.`)(on)\\s+(`?[_A-Za-z][\\w]*)\\b",
+					"captures": {
+						"1": {"name": "keyword.control.adventurescript"},
+						"2": {"name": "entity.name.function.adventurescript"}
+					}
+				},
+				{
+					"match": "\\b(?<!\\.`)(object|location|item|character|dialog|option|namespace|scope)\\s+(`?[_A-Za-z][\\w]*)\\b",
+					"captures": {
+						"1": {"name": "keyword.control.adventurescript"},
+						"2": {"name": "entity.name.class.adventurescript"}
+					}
+				},
+				{
+					"name": "entity.name.function.adventurescript",
+					"begin": "\\b(?<!\\.`)(function)\\s+(`?[_A-Za-z][\\w]*)\\b",
+					"beginCaptures": {
+						"1": {"name": "keyword.control.adventurescript"},
+						"2": {"name": "entity.name.function.adventurescript"}
+					},
+					"end": "$",
+					"patterns": [
+						{
+							"match": "((?:\\.\\.\\.)?`?[_A-Za-z][\\w]*\\??)(:\\w+)?\\b",
+							"captures": {
+								"1": {"name": "variable.parameter.adventurescript"},
+								"2": {"name": "entity.name.type.adventurescript"}
+							}
+						},
+						{
+							"match": "\\.\\.\\.",
+							"name": "variable.parameter.adventurescript"
+						}
+					]
+				},
+				{
+					"name": "keyword.control.adventurescript",
+					"match": "\\b(?<!\\.)(on|if|in|for|elseif|else|while|local|scope|set|unset|return|break|continue|throw|namespace|extern|yield|import|from|object|location|item|character|dialog|option)(?!\\.)\\b"
+				}
+			]
+		},
+		"constants":  {
+			"patterns": [
+				{
+					"name": "constant.language.adventurescript",
+					"match": "\\b(?<!\\.`)(true|false|undefined)(?!\\.)\\b"
+				},
+				{
+					"name": "constant.numeric.adventurescript",
+					"match": "\\b(0[Xx][0-9a-fA-F]+|0[bB][01]+|[0-9]*\\.[0-9]+([eE][-+]?[0-9]+)?|[0-9]+([eE][-+]?[0-9]+)?)\\b"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.block.adventurescript",
+					"begin": "#=",
+					"end": "=#"
+				},
+				{
+					"name": "comment.line.adventurescript",
+					"match": "#[^=].*|#"
+				}
+			]
+		},
+		"strings": {
+			"patterns": [
+				{
+					"name": "string.quoted.single.adventurescript",
+					"begin": "'",
+					"end": "'",
+					"patterns": [
+						{
+							"name": "constant.character.escape.adventurescript",
+							"match": "\\\\."
+						}
+					]
+				},
+				{
+					"name": "string.quoted.double.adventurescript",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.adventurescript",
+							"match": "\\\\."
+						},
+						{
+							"name": "none.adventurescript",
+							"begin": "(\\$\\{)(?:\\s*(?:(parent|self|root)|([`.]?[_A-Za-z][\\w]*))((?:[.][_A-Za-z][\\w]*)*))?",
+							"beginCaptures": {
+								"1": {"name": "constant.character.escape.adventurescript"},
+								"2": {"name": "constant.variable.adventurescript"},
+								"3": {"name": "variable.other.adventurescript"},
+								"4": {"patterns": [{"include": "#varname-call"}]}
+							},
+							"end": "\\}",
+							"endCaptures": {
+								"0": {"name": "constant.character.escape.adventurescript"}
+							},
+							"patterns": [
+								{"include": "#common"},
+								{"include": "#varname"}
+							]
+						},
+						{
+							"name": "none.adventurescript",
+							"begin": "\\$\\(",
+							"beginCaptures": {
+								"0": {"name": "constant.character.escape.adventurescript"}
+							},
+							"end": "\\)",
+							"endCaptures": {
+								"0": {"name": "constant.character.escape.adventurescript"}
+							},
+							"patterns": [
+								{"include": "#common"},
+								{"include": "#varname"}
+							]
+						},
+						{
+							"match": "(\\$)(?:\\.(?:(parent)|[_A-Za-z][\\w]*)|(parent|self|root)|`?[_A-Za-z][\\w]*)",
+							"captures": {
+								"0": {"name": "none.adventurescript"},
+								"1": {"name": "constant.character.escape.adventurescript"},
+								"2": {"name": "constant.variable.adventurescript"},
+								"3": {"name": "constant.variable.adventurescript"}
+							}
+						}
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "source.as"
+}

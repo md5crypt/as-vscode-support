@@ -1,0 +1,26 @@
+{
+    "name": "adventurescript-support",
+    "displayName": "adventurescript-support",
+    "description": "Support for adventure script language",
+    "version": "0.0.1",
+    "publisher": "whatever",
+    "engines": {
+        "vscode": "^1.30.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "adventurescript",
+            "aliases": ["Adventure Script", "adventurescript"],
+            "extensions": [".as"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "adventurescript",
+            "scopeName": "source.as",
+            "path": "./syntaxes/adventurescript.tmLanguage.json"
+        }]
+    }
+}
